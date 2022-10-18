@@ -1,5 +1,6 @@
 import streamlit
 import pandas
+import requests
 import snowflake.connector
 from urllib.error import URLError
 
@@ -23,19 +24,19 @@ fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.
 # Display the table on the page.
 fruits_to_show = my_fruit_list.loc[fruits_selected]
 
-#New section to display fruitvice api response
+# New section to display fruitvice api response
 streamlit.header("Fruityvice Fruit Advice!")
-try:
-  fruit_choice = streamlit.text_input('What fruit would you like information about?')
-  if not fruit_choice:
-       streamlit.error("Please select a fruit to get information.")
-   else:
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-        fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
-        streamlit.dataframe(fruityvice_normalized)
-      
-except URLError as e:
-    streamlit.error()
+fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
+streamlit.write('The user entered ', fruit_choice)
+
+
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+
+
+# write your own comment -what does the next line do? 
+fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+# write your own comment - what does this do?
+streamlit.dataframe(fruityvice_normalized)
 
 streamlit.stop()
 
@@ -51,10 +52,6 @@ streamlit.dataframe(my_data_rows)
 add_my_fruit = streamlit.text_input('What fruit would you like to add?','jackfruit')
 streamlit.write('Thanks for adding', add_my_fruit)
 
-#This will not work correctly, but just go with it for now
+#This wiil not work correctly, but just go with it for now
 my_cur.execute("insert into fruit_load_list values ('from streamlit')")
-
-
-
-
 
